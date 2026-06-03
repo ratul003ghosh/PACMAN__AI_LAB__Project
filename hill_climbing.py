@@ -5,3 +5,7 @@
 
 algorithm_name = 'Hill Climbing'
 student_id = '0112410038'
+
+class HillClimbing:
+    def __init__(self):
+        pass
