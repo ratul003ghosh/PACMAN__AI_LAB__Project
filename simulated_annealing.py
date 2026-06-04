@@ -13,4 +13,7 @@ class SimulatedAnnealing:      # class for the Simulated Annealing algorithm
     # Constructor method
     def __init__(self):
         self.temperature = initial_temperature          # Initial temperature for exploration
-        self.cooling_rate = cooling_rate                   # Cooling rate to decrease the temperature after each iteration
+        self.cooling_rate = cooling_rate                   # Cooling rate to decrease the temperature after each iteration 
+    
+    def cool_down(self):            # Reduce the temperature after each iteration
+        self.temperature *= self.cooling_rate
