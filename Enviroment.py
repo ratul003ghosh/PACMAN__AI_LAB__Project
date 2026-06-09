@@ -43,3 +43,40 @@ list("W         E   W"),
 list("W             W"),
 list("WWWWWWWWWWWWWWW")
 ]
+# Maze 2 (Medium)
+maze2 = [
+list("WWWWWWWWWWWWWWW"),
+list("WP W      F   W"),
+list("W  W WWWWWWW  W"),
+list("W  W     G W  W"),
+list("W  WWWWWWW W  W"),
+list("W      F   W  W"),
+list("WWWWWWW WWWW  W"),
+list("W            GW"),
+list("W WWWWWWWWWW  W"),
+list("W      F      W"),
+list("W WWWWWWWWWW  W"),
+list("W             W"),
+list("W      E      W"),
+list("W             W"),
+list("WWWWWWWWWWWWWWW")
+]
+
+# Maze 3 (Hard)
+maze3 = [
+list("WWWWWWWWWWWWWWW"),
+list("WP     W     FW"),
+list("W WWWW W WWWW W"),
+list("W W        W  W"),
+list("W W WWWWWW W GW"),
+list("W W      W W  W"),
+list("W WWWWWW W W  W"),
+list("W      W W W  W"),
+list("WWWWW W W W  FW"),
+list("W     W W W   W"),
+list("W WWWWW W WWWWW"),
+list("W     G W     W"),
+list("W WWWWWWWWWW  W"),
+list("W       E     W"),
+list("WWWWWWWWWWWWWWW")
+]
