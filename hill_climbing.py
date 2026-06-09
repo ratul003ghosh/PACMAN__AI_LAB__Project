@@ -6,13 +6,15 @@
 algorithm_name = 'Hill Climbing'
 student_id = '0112410038'
 
-class HillClimbing:
+class HillClimbing:                                     # Class for the Hill Climbing algorithm
 
     # Constructor method
     def __init__(self):
+        self.current_state = None                       # Store the current state being evaluated
+        self.current_score = None                       # Store the score of the current state
 
-        # Store the current state being evaluated
-        self.current_state = None
+    def evaluate_state(self, state):                    # Evaluate the quality of a given state
+        return 0                                        # Return 0 as a placeholder (actual scoring logic later)
 
-        # Store the score of the current state
-        self.current_score = None
+    def get_neighbors(self, state):                     # Generate neighboring states from the current state
+        return []                                       # Return an empty list as a placeholder (actual logic later)
