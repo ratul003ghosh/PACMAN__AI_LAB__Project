@@ -58,3 +58,47 @@ def get_neighbors(grid, position, avoid_ghosts=True):
         if is_walkable(grid, next_position, avoid_ghosts=avoid_ghosts):
             neighbors.append(next_position)
     return neighbors
+
+def manhattan_distance(position_a, position_b):
+    row_a, col_a = position_a
+    row_b, col_b = position_b
+    return abs(row_a - row_b) + abs(col_a - col_b)
+
+def dijkstra_grid(grid, start, avoid_ghosts=True):
+    distances = {}
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            position = (row, col)
+            if is_walkable(grid, position, avoid_ghosts=avoid_ghosts):
+                distances[position] = float("inf")
+
+    distances[start] = 0
+    previous = {}
+    pq = []
+    heapq.heappush(pq, (0, start))
+    visited = set()
+    while pq:
+        current_distance, current_position = heapq.heappop(pq)
+        if current_position in visited:
+            continue
+        visited.add(current_position)
+        for neighbor in get_neighbors(grid, current_position, avoid_ghosts=avoid_ghosts):
+            new_distance = current_distance + 1
+            if new_distance < distances[neighbor]:
+                distances[neighbor] = new_distance
+                previous[neighbor] = current_position
+                heapq.heappush(pq, (new_distance, neighbor))
+    return distances, previous
+
+def reconstruct_path(previous, start, goal):
+    if start == goal:
+        return [start]
+    if goal not in previous:
+        return None
+    path = [goal]
+    current = goal
+    while current != start:
+        current = previous[current]
+        path.append(current)
+    path.reverse()
+    return path
