@@ -110,13 +110,30 @@ def draw_maze(grid):
                 (x, y, CELL_SIZE, CELL_SIZE)
             )
 
-            # DRAW WALL
             if cell == "W":
-                pygame.draw.rect(
-                    screen,
-                    BLUE,
-                    (x, y, CELL_SIZE, CELL_SIZE)
-                )
+
+    # Main wall block
+    pygame.draw.rect(
+        screen,
+        (20, 20, 180),
+        (x, y, CELL_SIZE, CELL_SIZE),
+        border_radius=8
+    )
+
+    # Inner border glow
+    pygame.draw.rect(
+        screen,
+        (100, 200, 255),
+        (x + 4, y + 4,
+         CELL_SIZE - 8,
+         CELL_SIZE - 8),
+        2,
+        border_radius=6
+    )
+
+    # Small light dots
+    pygame.draw.circle(screen, (180, 220, 255), (x + 8, y + 8), 2)
+    pygame.draw.circle(screen, (180, 220, 255), (x + CELL_SIZE - 8, y + 8), 2)
 
             # DRAW PACMAN
             elif cell == "P":
