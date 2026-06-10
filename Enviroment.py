@@ -80,3 +80,88 @@ list("W WWWWWWWWWW  W"),
 list("W       E     W"),
 list("WWWWWWWWWWWWWWW")
 ]
+# =========================
+# STORE ALL MAZES
+# =========================
+mazes = [maze1, maze2, maze3]
+current_maze = 0
+
+
+# =========================
+# DRAW MAZE FUNCTION
+# =========================
+def draw_maze(grid):
+
+    # LOOP THROUGH ROWS & COLUMNS
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+
+            # CALCULATE CELL POSITION
+            x = col * CELL_SIZE
+            y = row * CELL_SIZE
+
+            # GET CURRENT CELL
+            cell = grid[row][col]
+
+            # DRAW BACKGROUND
+            pygame.draw.rect(
+                screen,
+                BLACK,
+                (x, y, CELL_SIZE, CELL_SIZE)
+            )
+
+            # DRAW WALL
+            if cell == "W":
+                pygame.draw.rect(
+                    screen,
+                    BLUE,
+                    (x, y, CELL_SIZE, CELL_SIZE)
+                )
+
+            # DRAW PACMAN
+            elif cell == "P":
+                pygame.draw.circle(
+                    screen,
+                    YELLOW,
+                    (x + CELL_SIZE // 2,
+                     y + CELL_SIZE // 2),
+                    CELL_SIZE // 3
+                )
+
+            # DRAW FOOD
+            elif cell == "F":
+                pygame.draw.circle(
+                    screen,
+                    WHITE,
+                    (x + CELL_SIZE // 2,
+                     y + CELL_SIZE // 2),
+                    6
+                )
+
+            # DRAW GHOST
+            elif cell == "G":
+                pygame.draw.rect(
+                    screen,
+                    RED,
+                    (x + 8, y + 8,
+                     CELL_SIZE - 16,
+                     CELL_SIZE - 16)
+                )
+
+            # DRAW EXIT
+            elif cell == "E":
+                pygame.draw.rect(
+                    screen,
+                    GREEN,
+                    (x + 5, y + 5,
+                     CELL_SIZE - 10,
+                     CELL_SIZE - 10)
+                )
+
+            # DRAW GRID BORDER
+            pygame.draw.rect(
+                screen,
+                GRAY,
+                (x, y, CELL_SIZE, CELL_SIZE),
+                1
+            )
