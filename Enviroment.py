@@ -165,3 +165,48 @@ def draw_maze(grid):
                 (x, y, CELL_SIZE, CELL_SIZE),
                 1
             )
+
+# =========================
+# MAIN GAME LOOP
+# =========================
+running = True
+
+while running:
+
+    # HANDLE EVENTS
+    for event in pygame.event.get():
+
+        # CLOSE WINDOW
+        if event.type == pygame.QUIT:
+            running = False
+
+        # KEYBOARD INPUT
+        if event.type == pygame.KEYDOWN:
+
+            # SWITCH TO MAZE 1
+            if event.key == pygame.K_1:
+                current_maze = 0
+
+            # SWITCH TO MAZE 2
+            elif event.key == pygame.K_2:
+                current_maze = 1
+
+            # SWITCH TO MAZE 3
+            elif event.key == pygame.K_3:
+                current_maze = 2
+
+    # CLEAR SCREEN
+    screen.fill(BLACK)
+
+    # DRAW CURRENT MAZE
+    draw_maze(mazes[current_maze])
+
+    # UPDATE DISPLAY
+    pygame.display.flip()
+
+
+# =========================
+# EXIT GAME
+# =========================
+pygame.quit()
+sys.exit()
