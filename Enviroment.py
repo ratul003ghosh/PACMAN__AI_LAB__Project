@@ -140,13 +140,36 @@ def draw_maze(grid):
 
             # DRAW GHOST
             elif cell == "G":
-                pygame.draw.rect(
-                    screen,
-                    RED,
-                    (x + 8, y + 8,
-                     CELL_SIZE - 16,
-                     CELL_SIZE - 16)
-                )
+
+    # Ghost head
+    pygame.draw.circle(
+        screen,
+        RED,
+        (x + CELL_SIZE // 2, y + 15),
+        12
+    )
+
+    # Ghost body
+    pygame.draw.rect(
+        screen,
+        RED,
+        (x + 8, y + 15,
+         CELL_SIZE - 16,
+         CELL_SIZE - 12)
+    )
+
+    # Bottom curves
+    pygame.draw.circle(screen, RED, (x + 10, y + CELL_SIZE - 8), 5)
+    pygame.draw.circle(screen, RED, (x + 20, y + CELL_SIZE - 5), 5)
+    pygame.draw.circle(screen, RED, (x + 30, y + CELL_SIZE - 8), 5)
+
+    # Eyes
+    pygame.draw.circle(screen, WHITE, (x + 14, y + 18), 4)
+    pygame.draw.circle(screen, WHITE, (x + 26, y + 18), 4)
+
+    # Pupils
+    pygame.draw.circle(screen, BLUE, (x + 15, y + 19), 2)
+    pygame.draw.circle(screen, BLUE, (x + 27, y + 19), 2)
 
             # DRAW EXIT
             elif cell == "E":
