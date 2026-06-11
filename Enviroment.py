@@ -1,11 +1,12 @@
-
 import pygame
 import sys
 
 pygame.init()
 
+# =========================
+# WINDOW SETTINGS
+# =========================
 CELL_SIZE = 40
-
 ROWS = 15
 COLS = 15
 
@@ -15,238 +16,201 @@ HEIGHT = ROWS * CELL_SIZE
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("AI Pac-Man Maze Environment")
 
-# Colors
-BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
+# =========================
+# COLORS
+# =========================
+BLACK = (10, 10, 10)
+BLUE = (0, 100, 255)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-GRAY = (70, 70, 70)
+RED = (255, 60, 60)
+GREEN = (0, 255, 100)
+GRAY = (50, 50, 50)
 
-
-# Maze 1 (Easy)
+# =========================
+# MAZE 1 (EASY - OPEN + SIMPLE PATHS)
+# =========================
 maze1 = [
 list("WWWWWWWWWWWWWWW"),
-list("WP   F      G W"),
-list("W WWW WWWWWWW W"),
-list("W             W"),
-list("W   F         W"),
-list("W WWWWWWWWWWW W"),
-list("W             W"),
-list("W G           W"),
-list("W      F      W"),
-list("W WWWWWWWWWWW W"),
-list("W             W"),
-list("W             W"),
-list("W         E   W"),
-list("W             W"),
-list("WWWWWWWWWWWWWWW")
-]
-# Maze 2 (Medium)
-maze2 = [
-list("WWWWWWWWWWWWWWW"),
-list("WP W      F   W"),
-list("W  W WWWWWWW  W"),
-list("W  W     G W  W"),
-list("W  WWWWWWW W  W"),
-list("W      F   W  W"),
-list("WWWWWWW WWWW  W"),
-list("W            GW"),
-list("W WWWWWWWWWW  W"),
-list("W      F      W"),
-list("W WWWWWWWWWW  W"),
-list("W             W"),
-list("W      E      W"),
-list("W             W"),
+list("WP   F     F  W"),
+list("W WWW   WWWW W"),
+list("W   G        W"),
+list("W WWWWW WWWW W"),
+list("W F       G  W"),
+list("W WWW WWWWW W"),
+list("W     W      W"),
+list("W WWW W WWWW W"),
+list("W   G     F  W"),
+list("W WWWWWWWWWW W"),
+list("W            W"),
+list("W   F    E   W"),
+list("W            W"),
 list("WWWWWWWWWWWWWWW")
 ]
 
-# Maze 3 (Hard)
-maze3 = [
+# =========================
+# MAZE 2 (MEDIUM - BRANCHES + TRAPS)
+# =========================
+maze2 = [
 list("WWWWWWWWWWWWWWW"),
-list("WP     W     FW"),
+list("WP W   F   W  W"),
+list("W W WWWWW W W W"),
+list("W   G   W   F W"),
+list("WWWWW W WWWWW W"),
+list("W   W     G   W"),
+list("W W WWWWW W W W"),
+list("W F W   W   W W"),
+list("W WWWWW W WWW W"),
+list("W   G   F   W W"),
+list("W W WWWWWWW W W"),
+list("W   W     W   W"),
 list("W WWWW W WWWW W"),
-list("W W        W  W"),
-list("W W WWWWWW W GW"),
-list("W W      W W  W"),
-list("W WWWWWW W W  W"),
-list("W      W W W  W"),
-list("WWWWW W W W  FW"),
-list("W     W W W   W"),
-list("W WWWWW W WWWWW"),
-list("W     G W     W"),
-list("W WWWWWWWWWW  W"),
-list("W       E     W"),
+list("W    E        W"),
 list("WWWWWWWWWWWWWWW")
 ]
+
 # =========================
-# STORE ALL MAZES
+# MAZE 3 (HARD - LABYRINTH + CHOKE POINTS)
+# =========================
+maze3 = [
+list("WWWWWWWWWWWWWWW"),
+list("WP W   F   W  W"),
+list("W W W WWW W W W"),
+list("W G W   W   W W"),
+list("W WWWWW W WWWWW"),
+list("W   W   G   W W"),
+list("WW W WWWWW W WW"),
+list("W  F W   W F  W"),
+list("W WWWW W WWWW W"),
+list("W   G   W   W W"),
+list("WWW W WWW W WWW"),
+list("W   W   G   W W"),
+list("W W WWWWWWW W W"),
+list("W   F   E     W"),
+list("WWWWWWWWWWWWWWW")
+]
+
+# =========================
+# STORE MAZES
 # =========================
 mazes = [maze1, maze2, maze3]
 current_maze = 0
 
-
 # =========================
-# DRAW MAZE FUNCTION
+# DRAW FUNCTION
 # =========================
 def draw_maze(grid):
 
-    # LOOP THROUGH ROWS & COLUMNS
     for row in range(len(grid)):
         for col in range(len(grid[row])):
 
-            # CALCULATE CELL POSITION
             x = col * CELL_SIZE
             y = row * CELL_SIZE
-
-            # GET CURRENT CELL
             cell = grid[row][col]
 
-            # DRAW BACKGROUND
-            pygame.draw.rect(
-                screen,
-                BLACK,
-                (x, y, CELL_SIZE, CELL_SIZE)
-            )
+            # background
+            pygame.draw.rect(screen, BLACK, (x, y, CELL_SIZE, CELL_SIZE))
 
+            # WALL
             if cell == "W":
+                pygame.draw.rect(
+                    screen,
+                    (20, 20, 180),
+                    (x, y, CELL_SIZE, CELL_SIZE),
+                    border_radius=8
+                )
 
-    # Main wall block
-    pygame.draw.rect(
-        screen,
-        (20, 20, 180),
-        (x, y, CELL_SIZE, CELL_SIZE),
-        border_radius=8
-    )
+                pygame.draw.rect(
+                    screen,
+                    (100, 200, 255),
+                    (x + 4, y + 4, CELL_SIZE - 8, CELL_SIZE - 8),
+                    2,
+                    border_radius=6
+                )
 
-    # Inner border glow
-    pygame.draw.rect(
-        screen,
-        (100, 200, 255),
-        (x + 4, y + 4,
-         CELL_SIZE - 8,
-         CELL_SIZE - 8),
-        2,
-        border_radius=6
-    )
-
-    # Small light dots
-    pygame.draw.circle(screen, (180, 220, 255), (x + 8, y + 8), 2)
-    pygame.draw.circle(screen, (180, 220, 255), (x + CELL_SIZE - 8, y + 8), 2)
-
-            # DRAW PACMAN
+            # PACMAN
             elif cell == "P":
                 pygame.draw.circle(
                     screen,
                     YELLOW,
-                    (x + CELL_SIZE // 2,
-                     y + CELL_SIZE // 2),
+                    (x + CELL_SIZE // 2, y + CELL_SIZE // 2),
                     CELL_SIZE // 3
                 )
 
-            # DRAW FOOD
+            # FOOD
             elif cell == "F":
                 pygame.draw.circle(
                     screen,
                     WHITE,
-                    (x + CELL_SIZE // 2,
-                     y + CELL_SIZE // 2),
-                    6
+                    (x + CELL_SIZE // 2, y + CELL_SIZE // 2),
+                    5
                 )
 
-            # DRAW GHOST
+                pygame.draw.circle(
+                    screen,
+                    (120, 200, 255),
+                    (x + CELL_SIZE // 2, y + CELL_SIZE // 2),
+                    10,
+                    1
+                )
+
+            # GHOST (3 ghosts supported automatically)
             elif cell == "G":
+                pygame.draw.circle(
+                    screen,
+                    RED,
+                    (x + CELL_SIZE // 2, y + 15),
+                    12
+                )
 
-    # Ghost head
-    pygame.draw.circle(
-        screen,
-        RED,
-        (x + CELL_SIZE // 2, y + 15),
-        12
-    )
+                pygame.draw.rect(
+                    screen,
+                    RED,
+                    (x + 8, y + 15, CELL_SIZE - 16, CELL_SIZE - 12)
+                )
 
-    # Ghost body
-    pygame.draw.rect(
-        screen,
-        RED,
-        (x + 8, y + 15,
-         CELL_SIZE - 16,
-         CELL_SIZE - 12)
-    )
+                pygame.draw.circle(screen, WHITE, (x + 14, y + 18), 4)
+                pygame.draw.circle(screen, WHITE, (x + 26, y + 18), 4)
 
-    # Bottom curves
-    pygame.draw.circle(screen, RED, (x + 10, y + CELL_SIZE - 8), 5)
-    pygame.draw.circle(screen, RED, (x + 20, y + CELL_SIZE - 5), 5)
-    pygame.draw.circle(screen, RED, (x + 30, y + CELL_SIZE - 8), 5)
+                pygame.draw.circle(screen, BLUE, (x + 15, y + 19), 2)
+                pygame.draw.circle(screen, BLUE, (x + 27, y + 19), 2)
 
-    # Eyes
-    pygame.draw.circle(screen, WHITE, (x + 14, y + 18), 4)
-    pygame.draw.circle(screen, WHITE, (x + 26, y + 18), 4)
-
-    # Pupils
-    pygame.draw.circle(screen, BLUE, (x + 15, y + 19), 2)
-    pygame.draw.circle(screen, BLUE, (x + 27, y + 19), 2)
-
-            # DRAW EXIT
+            # EXIT
             elif cell == "E":
                 pygame.draw.rect(
                     screen,
                     GREEN,
-                    (x + 5, y + 5,
-                     CELL_SIZE - 10,
-                     CELL_SIZE - 10)
+                    (x + 5, y + 5, CELL_SIZE - 10, CELL_SIZE - 10),
+                    border_radius=5
                 )
 
-            # DRAW GRID BORDER
-            pygame.draw.rect(
-                screen,
-                GRAY,
-                (x, y, CELL_SIZE, CELL_SIZE),
-                1
-            )
+            # GRID
+            pygame.draw.rect(screen, GRAY, (x, y, CELL_SIZE, CELL_SIZE), 1)
 
 # =========================
-# MAIN GAME LOOP
+# GAME LOOP
 # =========================
 running = True
 
 while running:
 
-    # HANDLE EVENTS
     for event in pygame.event.get():
 
-        # CLOSE WINDOW
         if event.type == pygame.QUIT:
             running = False
 
-        # KEYBOARD INPUT
         if event.type == pygame.KEYDOWN:
 
-            # SWITCH TO MAZE 1
             if event.key == pygame.K_1:
                 current_maze = 0
-
-            # SWITCH TO MAZE 2
             elif event.key == pygame.K_2:
                 current_maze = 1
-
-            # SWITCH TO MAZE 3
             elif event.key == pygame.K_3:
                 current_maze = 2
 
-    # CLEAR SCREEN
     screen.fill(BLACK)
-
-    # DRAW CURRENT MAZE
     draw_maze(mazes[current_maze])
-
-    # UPDATE DISPLAY
     pygame.display.flip()
 
-
-# =========================
-# EXIT GAME
-# =========================
 pygame.quit()
 sys.exit()
