@@ -102,3 +102,35 @@ def reconstruct_path(previous, start, goal):
         path.append(current)
     path.reverse()
     return path
+
+def shortest_path(grid, start, goal, avoid_ghosts=True):
+    distances, previous = dijkstra_grid(grid, start, avoid_ghosts=avoid_ghosts)
+    cost = distances.get(goal, float("inf"))
+    if cost == float("inf"):
+        return None, float("inf")
+    path = reconstruct_path(previous, start, goal)
+    return path, cost
+
+def build_heuristic_map(grid, targets=None, avoid_ghosts=True):     
+    key_points = get_key_points(grid)
+    if targets is None:
+        targets = []
+        targets.extend(key_points["foods"])
+        if key_points["exit"] is not None:
+            targets.append(key_points["exit"])
+
+    heuristic_map = {}
+    for target in targets:
+        if target is None:
+            continue
+
+        if not is_walkable(grid, target, avoid_ghosts=avoid_ghosts):
+            continue
+
+        distances, _ = dijkstra_grid(grid, target, avoid_ghosts=avoid_ghosts)
+        heuristic_map[target] = distances
+
+    return heuristic_map
+
+def get_heuristic_value(heuristic_map, node, target):
+    return heuristic_map.get(target, {}).get(node, float("inf"))
