@@ -18,3 +18,16 @@ class HillClimbing:                                     # Class for the Hill Cli
 
     def get_neighbors(self, state):                     # Generate neighboring states from the current state
         return []                                       # Return an empty list as a placeholder (actual logic later)
+
+    def solve(self, state):   # Main Hill Climbing search process
+        # Step 1: Evaluate current state
+
+        # Step 2: Generate neighboring states
+
+        # Step 3: Select best neighbor
+
+        # Step 4: Move to better neighbor
+
+        # Step 5: Stop if no improvement exists
+
+        pass
