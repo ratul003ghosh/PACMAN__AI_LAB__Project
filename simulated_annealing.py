@@ -23,8 +23,30 @@ class SimulatedAnnealing:      # class for the Simulated Annealing algorithm
     def cool_down(self):            # Reduce the temperature after each iteration
         self.temperature *= self.cooling_rate
 
-    def evaluate_state(self, state):                    # Evaluate the quality of a given state
-        return 0                                        # Return 0 as a placeholder (actual scoring logic later)
+    def evaluate_state(self, state):                    # Evaluate the quality of a given state (food order)
+        if not state or not self.start_pos:
+            return float('-inf')
+
+        total_distance = 0
+        current_pos = self.start_pos
+
+        # Calculate the total path distance for visiting the foods in this specific order
+        for food in state:
+            if self.pathfinder_func:
+                total_distance += self.pathfinder_func(current_pos, food)
+            else:
+                total_distance += abs(current_pos[0] - food[0]) + abs(current_pos[1] - food[1])
+            current_pos = food
+
+        # Finally, add the distance from the last food to the exit
+        if self.exit_pos:
+            if self.pathfinder_func:
+                total_distance += self.pathfinder_func(current_pos, self.exit_pos)
+            else:
+                total_distance += abs(current_pos[0] - self.exit_pos[0]) + abs(current_pos[1] - self.exit_pos[1])
+
+        # Return negative distance because Simulated Annealing maximizes the score
+        return -total_distance
 
     def get_neighbors(self, state):                     # Generate neighboring states from the current state
         return []                                       # Return an empty list as a placeholder (actual logic later)
