@@ -12,15 +12,31 @@ class HillClimbing:                                     # Class for the Hill Cli
     def __init__(self):
         self.current_state = None                       # Store the current state being evaluated
         self.current_score = None                       # Store the score of the current state
+        self.grid = None                                # Store the maze grid to check for walls
+
 
     def evaluate_state(self, state):                    # Evaluate the quality of a given state
         return 0                                        # Return 0 as a placeholder (actual scoring logic later)
 
     def get_neighbors(self, state):                     # Generate neighboring states from the current state
-        return []                                       # Return an empty list as a placeholder (actual logic later)
+        row, col = state
+        neighbors = []
+        # Possible movements: Up, Down, Left, Right
+        moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        
+        for dr, dc in moves:
+            r, c = row + dr, col + dc
+            # Check if within bounds and not a wall ('W')
+            if 0 <= r < len(self.grid) and 0 <= c < len(self.grid[0]):
+                if self.grid[r][c] != 'W':
+                    neighbors.append((r, c))
+                    
+        return neighbors
 
-    def solve(self, state):   # Main Hill Climbing search process
+    def solve(self, state, grid):   # Main Hill Climbing search process
         self.current_state = state
+        self.grid = grid
+
         
         while True:
             # Step 1: Evaluate current state
