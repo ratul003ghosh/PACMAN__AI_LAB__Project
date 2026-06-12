@@ -16,7 +16,31 @@ class HillClimbing:                                     # Class for the Hill Cli
 
 
     def evaluate_state(self, state):                    # Evaluate the quality of a given state
-        return 0                                        # Return 0 as a placeholder (actual scoring logic later)
+        if self.grid is None:
+            return 0
+            
+        row, col = state
+        cell = self.grid[row][col]
+
+        # 1. Avoid walls and ghosts at all costs
+        if cell == 'W' or cell == 'G':
+            return float('-inf')
+            
+        # 2. Reaching Food or the Exit is the ultimate goal
+        if cell == 'F' or cell == 'E':
+            return 1000
+            
+        # 3. Calculate Manhattan distance to the nearest Food or Exit
+        min_dist = float('inf')
+        for r in range(len(self.grid)):
+            for c in range(len(self.grid[r])):
+                if self.grid[r][c] in ('F', 'E'):
+                    dist = abs(r - row) + abs(c - col)
+                    if dist < min_dist:
+                        min_dist = dist
+                        
+        # Return negative distance (closer is better, so smaller distance = higher score)
+        return -min_dist if min_dist != float('inf') else 0
 
     def get_neighbors(self, state):                     # Generate neighboring states from the current state
         row, col = state
