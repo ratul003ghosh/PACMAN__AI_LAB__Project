@@ -1,4 +1,5 @@
 import heapq
+import itertools
 
 from dijkstra import (
     GHOST,
@@ -166,3 +167,156 @@ def evaluate_food_sequence(grid, start, food_sequence, exit_position, heuristic_
 
     full_path = join_paths(path_segments)
     return total_cost, full_path
+
+def exact_best_food_order(grid, start, foods, exit_position, heuristic_map, avoid_ghosts=True, danger_penalty=0):
+    best_cost = float("inf")
+    best_sequence = None
+    best_path = None
+
+    for sequence in itertools.permutations(foods):
+        cost, path = evaluate_food_sequence(
+            grid,
+            start,
+            sequence,
+            exit_position,
+            heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+
+        if cost < best_cost:
+            best_cost = cost
+            best_sequence = list(sequence)
+            best_path = path
+
+    return best_cost, best_sequence, best_path
+
+
+def greedy_food_order(grid, start, foods, exit_position, heuristic_map, avoid_ghosts=True, danger_penalty=0):
+    remaining_foods = set(foods)
+    current_position = start
+    selected_sequence = []
+    path_segments = []
+    total_cost = 0
+
+    while remaining_foods:
+        best_food = None
+        best_food_path = None
+        best_food_cost = float("inf")
+
+        for food in remaining_foods:
+            path, cost = a_star(
+                grid,
+                current_position,
+                food,
+                heuristic_map=heuristic_map,
+                avoid_ghosts=avoid_ghosts,
+                danger_penalty=danger_penalty,
+            )
+
+            if cost < best_food_cost:
+                best_food = food
+                best_food_path = path
+                best_food_cost = cost
+
+        if best_food is None or best_food_path is None or best_food_cost == float("inf"):
+            return float("inf"), None, None
+
+        selected_sequence.append(best_food)
+        path_segments.append(best_food_path)
+        total_cost += best_food_cost
+        current_position = best_food
+        remaining_foods.remove(best_food)
+
+    exit_path, exit_cost = a_star(
+        grid,
+        current_position,
+        exit_position,
+        heuristic_map=heuristic_map,
+        avoid_ghosts=avoid_ghosts,
+        danger_penalty=danger_penalty,
+    )
+
+    if exit_path is None or exit_cost == float("inf"):
+        return float("inf"), None, None
+
+    path_segments.append(exit_path)
+    total_cost += exit_cost
+
+    full_path = join_paths(path_segments)
+    return total_cost, selected_sequence, full_path
+
+
+def solve_pacman(grid, heuristic_map=None, avoid_ghosts=True, danger_penalty=0, exact_limit=8):
+    start = find_symbol(grid, PACMAN)
+    exit_position = find_symbol(grid, EXIT)
+    foods = find_all_symbols(grid, FOOD)
+
+    if heuristic_map is None:
+        targets = foods + [exit_position]
+        heuristic_map = build_heuristic_map(grid, targets=targets, avoid_ghosts=avoid_ghosts)
+
+    if len(foods) <= exact_limit:
+        path_cost, food_sequence, full_path = exact_best_food_order(
+            grid,
+            start,
+            foods,
+            exit_position,
+            heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+    else:
+        path_cost, food_sequence, full_path = greedy_food_order(
+            grid,
+            start,
+            foods,
+            exit_position,
+            heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+
+    if full_path is None or path_cost == float("inf"):
+        return float("inf"), [], []
+
+    movement_sequence = path_to_movements(full_path)
+    return path_cost, food_sequence, movement_sequence
+
+
+def solve(grid, heuristic_map=None, avoid_ghosts=True, danger_penalty=0, exact_limit=8):
+
+    start = find_symbol(grid, PACMAN)
+    exit_position = find_symbol(grid, EXIT)
+    foods = find_all_symbols(grid, FOOD)
+
+    if heuristic_map is None:
+        targets = foods + [exit_position]
+        heuristic_map = build_heuristic_map(grid, targets=targets, avoid_ghosts=avoid_ghosts)
+
+    if len(foods) <= exact_limit:
+        path_cost, food_sequence, full_path = exact_best_food_order(
+            grid,
+            start,
+            foods,
+            exit_position,
+            heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+    else:
+        path_cost, food_sequence, full_path = greedy_food_order(
+            grid,
+            start,
+            foods,
+            exit_position,
+            heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+
+    if full_path is None or path_cost == float("inf"):
+        return float("inf"), [], [], []
+
+    movement_sequence = path_to_movements(full_path)
+    return path_cost, food_sequence, movement_sequence, full_path
