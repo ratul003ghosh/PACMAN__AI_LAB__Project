@@ -11,9 +11,14 @@ cooling_rate = 0.99
 class SimulatedAnnealing:      # class for the Simulated Annealing algorithm
 
     # Constructor method
-    def __init__(self):
+    def __init__(self, start_pos=None, exit_pos=None, pathfinder_func=None):
         self.temperature = initial_temperature          # Initial temperature for exploration
-        self.cooling_rate = cooling_rate                   # Cooling rate to decrease the temperature after each iteration 
+        self.cooling_rate = cooling_rate                # Cooling rate to decrease the temperature after each iteration 
+        self.current_state = None                       # Store the current state (order of foods)
+        self.current_score = None                       # Store the score of the current state
+        self.start_pos = start_pos                      # Pacman's starting position
+        self.exit_pos = exit_pos                        # The exit position
+        self.pathfinder_func = pathfinder_func          # Teammate's A* or Dijkstra function
     
     def cool_down(self):            # Reduce the temperature after each iteration
         self.temperature *= self.cooling_rate
