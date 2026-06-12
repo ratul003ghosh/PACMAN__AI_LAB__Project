@@ -9,58 +9,54 @@ student_id = '0112410038'
 class HillClimbing:                                     # Class for the Hill Climbing algorithm
 
     # Constructor method
-    def __init__(self):
-        self.current_state = None                       # Store the current state being evaluated
+    def __init__(self, start_pos=None, exit_pos=None, pathfinder_func=None):
+        self.current_state = None                       # Store the current state (order of foods)
         self.current_score = None                       # Store the score of the current state
-        self.grid = None                                # Store the maze grid to check for walls
+        self.start_pos = start_pos                      # Pacman's starting position
+        self.exit_pos = exit_pos                        # The exit position
+        self.pathfinder_func = pathfinder_func          # Teammate's A* or Dijkstra function
 
-
-    def evaluate_state(self, state):                    # Evaluate the quality of a given state
-        if self.grid is None:
-            return 0
-            
-        row, col = state
-        cell = self.grid[row][col]
-
-        # 1. Avoid walls and ghosts at all costs
-        if cell == 'W' or cell == 'G':
+    def evaluate_state(self, state):                    # Evaluate the quality of a given state (food order)
+        if not state or not self.start_pos:
             return float('-inf')
-            
-        # 2. Reaching Food or the Exit is the ultimate goal
-        if cell == 'F' or cell == 'E':
-            return 1000
-            
-        # 3. Calculate Manhattan distance to the nearest Food or Exit
-        min_dist = float('inf')
-        for r in range(len(self.grid)):
-            for c in range(len(self.grid[r])):
-                if self.grid[r][c] in ('F', 'E'):
-                    dist = abs(r - row) + abs(c - col)
-                    if dist < min_dist:
-                        min_dist = dist
-                        
-        # Return negative distance (closer is better, so smaller distance = higher score)
-        return -min_dist if min_dist != float('inf') else 0
 
-    def get_neighbors(self, state):                     # Generate neighboring states from the current state
-        row, col = state
+        total_distance = 0
+        current_pos = self.start_pos
+
+        # Calculate the total path distance for visiting the foods in this specific order
+        for food in state:
+            if self.pathfinder_func:
+                # Use Dijkstra or A* to get the exact path distance
+                total_distance += self.pathfinder_func(current_pos, food)
+            else:
+                # Fallback: Manhattan distance if no pathfinder is provided yet
+                total_distance += abs(current_pos[0] - food[0]) + abs(current_pos[1] - food[1])
+            current_pos = food
+
+        # Finally, add the distance from the last food to the exit
+        if self.exit_pos:
+            if self.pathfinder_func:
+                total_distance += self.pathfinder_func(current_pos, self.exit_pos)
+            else:
+                total_distance += abs(current_pos[0] - self.exit_pos[0]) + abs(current_pos[1] - self.exit_pos[1])
+
+        # Return negative distance because Hill Climbing maximizes the score (shorter distance = higher score)
+        return -total_distance
+
+    def get_neighbors(self, state):                     # Generate neighboring states by swapping foods
         neighbors = []
-        # Possible movements: Up, Down, Left, Right
-        moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        
-        for dr, dc in moves:
-            r, c = row + dr, col + dc
-            # Check if within bounds and not a wall ('W')
-            if 0 <= r < len(self.grid) and 0 <= c < len(self.grid[0]):
-                if self.grid[r][c] != 'W':
-                    neighbors.append((r, c))
-                    
+        # Generate new routes by swapping the order of any two food items
+        for i in range(len(state)):
+            for j in range(i + 1, len(state)):
+                neighbor = state.copy()
+                # Swap the items
+                neighbor[i], neighbor[j] = neighbor[j], neighbor[i]
+                neighbors.append(neighbor)
         return neighbors
 
-    def solve(self, state, grid):   # Main Hill Climbing search process
-        self.current_state = state
-        self.grid = grid
-
+    def solve(self, environment_foods):   # Main Hill Climbing search process
+        # environment_foods is the initial list of food coordinates: e.g., [(1,1), (3,4), (5,5)]
+        self.current_state = environment_foods.copy()
         
         while True:
             # Step 1: Evaluate current state
