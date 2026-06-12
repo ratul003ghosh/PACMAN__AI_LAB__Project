@@ -101,3 +101,68 @@ def a_star(grid, start, goal, heuristic_map=None, avoid_ghosts=True, danger_pena
                 heapq.heappush(pq, (f_cost, tie_breaker, neighbor))
 
     return None, float("inf")
+
+def path_to_movements(path):
+    if not path or len(path) == 1:
+        return []
+
+    movements = []
+
+    for index in range(1, len(path)):
+        previous_row, previous_col = path[index - 1]
+        current_row, current_col = path[index]
+
+        row_change = current_row - previous_row
+        col_change = current_col - previous_col
+
+        if row_change == -1 and col_change == 0:
+            movements.append("UP")
+        elif row_change == 1 and col_change == 0:
+            movements.append("DOWN")
+        elif row_change == 0 and col_change == -1:
+            movements.append("LEFT")
+        elif row_change == 0 and col_change == 1:
+            movements.append("RIGHT")
+
+    return movements
+
+def join_paths(path_segments):
+    full_path = []
+
+    for segment in path_segments:
+        if not segment:
+            continue
+
+        if not full_path:
+            full_path.extend(segment)
+        else:
+            full_path.extend(segment[1:])
+
+    return full_path
+
+def evaluate_food_sequence(grid, start, food_sequence, exit_position, heuristic_map, avoid_ghosts=True, danger_penalty=0):
+    current_position = start
+    total_cost = 0
+    path_segments = []
+
+    targets = list(food_sequence) + [exit_position]
+
+    for target in targets:
+        path, cost = a_star(
+            grid,
+            current_position,
+            target,
+            heuristic_map=heuristic_map,
+            avoid_ghosts=avoid_ghosts,
+            danger_penalty=danger_penalty,
+        )
+
+        if path is None or cost == float("inf"):
+            return float("inf"), None
+
+        total_cost += cost
+        path_segments.append(path)
+        current_position = target
+
+    full_path = join_paths(path_segments)
+    return total_cost, full_path
