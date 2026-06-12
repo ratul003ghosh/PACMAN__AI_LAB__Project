@@ -20,15 +20,32 @@ class HillClimbing:                                     # Class for the Hill Cli
         return []                                       # Return an empty list as a placeholder (actual logic later)
 
     def solve(self, state):   # Main Hill Climbing search process
-        # Step 1: Evaluate current state
+        self.current_state = state
+        
+        while True:
+            # Step 1: Evaluate current state
+            self.current_score = self.evaluate_state(self.current_state)
 
-        # Step 2: Generate neighboring states
+            # Step 2: Generate neighboring states
+            neighbors = self.get_neighbors(self.current_state)
+            if not neighbors:
+                break
 
-        # Step 3: Select best neighbor
-        best_neighbor = None         # Store the best neighboring state
-        best_score = float('-inf')
-        # Step 4: Move to better neighbor
+            # Step 3: Select best neighbor
+            best_neighbor = None         # Store the best neighboring state
+            best_score = float('-inf')
+            
+            for neighbor in neighbors:
+                score = self.evaluate_state(neighbor)
+                if score > best_score:
+                    best_score = score
+                    best_neighbor = neighbor
 
-        # Step 5: Stop if no improvement exists
-
-        pass
+            # Step 4: Move to better neighbor
+            # Step 5: Stop if no improvement exists
+            if best_score <= self.current_score:
+                break  # Reached a peak (local maximum)
+                
+            self.current_state = best_neighbor
+            
+        return self.current_state
