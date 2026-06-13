@@ -19,11 +19,11 @@ screen = Enviroment.screen
 
 # Wrapper functions
 def astar_pathfinder(start, end, grid):
-    path, cost = a_star(grid, start, end)
+    path, cost = a_star(grid, start, end, avoid_ghosts=False)
     return cost
 
 def dijkstra_pathfinder(start, end, grid):
-    path, cost = shortest_path(grid, start, end)
+    path, cost = shortest_path(grid, start, end, avoid_ghosts=False)
     return cost
 
 pygame.font.init()
@@ -134,7 +134,7 @@ def show_menu(analysis_data=None):
                     pygame.quit()
                     sys.exit()
 
-def animate_path(grid, path, title):
+def animate_path(grid, path, title, food_sequence):
     clean_grid = [list(row) for row in grid]
     for r in range(len(clean_grid)):
         for c in range(len(clean_grid[r])):
@@ -143,6 +143,9 @@ def animate_path(grid, path, title):
                 
     if not path:
         return
+
+    # Track which food Pacman is actually supposed to eat next according to the AI's sequence
+    foods_to_eat = list(food_sequence)
 
     for step in path:
         for event in pygame.event.get():
@@ -162,8 +165,10 @@ def animate_path(grid, path, title):
         y = r * CELL_SIZE
         pygame.draw.circle(screen, YELLOW, (x + CELL_SIZE // 2, y + CELL_SIZE // 2), CELL_SIZE // 3)
         
-        if clean_grid[r][c] == 'F':
+        # Only remove the food visually if Pacman reaches the EXACT targeted food in the AI's sequence
+        if foods_to_eat and (r, c) == foods_to_eat[0]:
             clean_grid[r][c] = ' '
+            foods_to_eat.pop(0)
             
         pygame.display.flip()
         time.sleep(0.2)
@@ -234,7 +239,7 @@ def run_visual_experiment():
         rl_score = (len(foods) * 100) - (cost * 5) - (ghosts_encountered * 30)
         
         pygame.display.set_caption(title)
-        animate_path(grid, full_path, title)
+        animate_path(grid, full_path, title, best_route)
         
         analysis_data = {
             'title': title,
