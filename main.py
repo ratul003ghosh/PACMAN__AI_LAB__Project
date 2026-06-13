@@ -58,9 +58,9 @@ def draw_dashboard_bg():
     pygame.draw.rect(screen, (25, 25, 35), (DASHBOARD_X, 0, DASHBOARD_WIDTH, HEIGHT))
     pygame.draw.line(screen, GRAY, (DASHBOARD_X, 0), (DASHBOARD_X, HEIGHT), 4)
 
-def show_menu(analysis_data=None):
+def show_menu(analysis_data=None, initial_maze_idx=0):
     running = True
-    maze_idx = 0
+    maze_idx = initial_maze_idx
     
     while running:
         screen.fill(BLACK)
@@ -175,9 +175,12 @@ def animate_path(grid, path, title, food_sequence):
 
 def run_visual_experiment():
     analysis_data = None
+    current_maze = 0
     
     while True:
-        maze_idx, choice = show_menu(analysis_data)
+        current_maze, choice = show_menu(analysis_data, current_maze)
+        
+        maze_idx = current_maze
         
         grid = mazes[maze_idx]
         key_points = get_key_points(grid)
