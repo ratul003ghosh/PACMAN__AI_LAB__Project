@@ -141,4 +141,5 @@ We generated visual charts showing these comparisons:
 
 ---
 
-*This project was created for our AI Lab course presentation.*
+*This project was created for our AI Lab course supervised by our Faulty.*
+
