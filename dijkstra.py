@@ -7,7 +7,7 @@ EXIT = "E"
 
 def in_bounds(grid, position):
     row, col = position
-    return 0 <= row < len(grid) and 0 <= col < len(grid[0])
+    return 0 <= row < len(grid) and 0 <= col < len(grid[row])
 
 def find_symbol(grid, symbol):
     for row in range(len(grid)):
