@@ -48,8 +48,16 @@ class SimulatedAnnealing:      # class for the Simulated Annealing algorithm
         # Return negative distance because Simulated Annealing maximizes the score
         return -total_distance
 
-    def get_neighbors(self, state):                     # Generate neighboring states from the current state
-        return []                                       # Return an empty list as a placeholder (actual logic later)
+    def get_neighbors(self, state):                     # Generate neighboring states by swapping foods
+        neighbors = []
+        # Generate new routes by swapping the order of any two food items
+        for i in range(len(state)):
+            for j in range(i + 1, len(state)):
+                neighbor = state.copy()
+                # Swap the items
+                neighbor[i], neighbor[j] = neighbor[j], neighbor[i]
+                neighbors.append(neighbor)
+        return neighbors
 
     def solve(self, state):   # Main Simulated Annealing search process
         # Step 1: Evaluate current state
