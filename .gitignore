@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# MS Office lock files
+~$*
+~WR*.tmp
+
+# User-specific / Local configs
+.vs/
+.idea/
+.vscode/
