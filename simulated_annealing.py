@@ -3,6 +3,9 @@
 # Branch: optimization_0112410038
 # Algorithm: Simulated Annealing
 
+import random
+import math
+
 algorithm_name = 'Simulated Annealing'
 student_id = '0112410038'
 initial_temperature = 100.0
@@ -59,17 +62,38 @@ class SimulatedAnnealing:      # class for the Simulated Annealing algorithm
                 neighbors.append(neighbor)
         return neighbors
 
-    def solve(self, state):   # Main Simulated Annealing search process
-        # Step 1: Evaluate current state
-
-        # Step 2: Generate neighboring states
-
-        # Step 3: Select random neighbor
-
-        # Step 4: Calculate energy difference & decide acceptance
-
-        # Step 5: Cool down temperature
-
+    def solve(self, environment_foods):   # Main Simulated Annealing search process
+        self.current_state = environment_foods.copy()
+        
         # Step 6: Stop when temperature is very low
+        while self.temperature > 0.01:
+            # Step 1: Evaluate current state
+            self.current_score = self.evaluate_state(self.current_state)
 
-        pass
+            # Step 2: Generate neighboring states
+            neighbors = self.get_neighbors(self.current_state)
+            if not neighbors:
+                break
+                
+            # Step 3: Select random neighbor
+            neighbor = random.choice(neighbors)
+            neighbor_score = self.evaluate_state(neighbor)
+
+            # Step 4: Calculate energy difference & decide acceptance
+            # Energy difference (delta E). For maximization: neighbor_score - current_score
+            delta_e = neighbor_score - self.current_score
+            
+            if delta_e > 0:
+                # Better state, accept it
+                self.current_state = neighbor
+            else:
+                # Worse state, accept with a probability
+                if self.temperature > 0.0001:
+                    acceptance_probability = math.exp(delta_e / self.temperature)
+                    if random.random() < acceptance_probability:
+                        self.current_state = neighbor
+
+            # Step 5: Cool down temperature
+            self.cool_down()
+
+        return self.current_state
