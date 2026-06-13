@@ -93,6 +93,11 @@ def show_menu(analysis_data=None):
             y_offset = draw_text(f"Execution Time: {analysis_data['time']:.4f} sec", font_text, WHITE, DASHBOARD_X + 20, y_offset)
             y_offset = draw_text(f"Path Distance: {analysis_data['distance']} steps", font_text, WHITE, DASHBOARD_X + 20, y_offset)
             
+            # RL Metrics
+            ghost_color = RED if analysis_data['ghosts'] > 0 else GREEN
+            y_offset = draw_text(f"Ghosts Encountered: {analysis_data['ghosts']}", font_text, ghost_color, DASHBOARD_X + 20, y_offset)
+            y_offset = draw_text(f"RL Reward Score: {analysis_data['score']}", font_text, YELLOW, DASHBOARD_X + 20, y_offset)
+            
             y_offset += 15
             if analysis_data['food_seq']:
                 food_seq_str = "Food Sequence: " + " -> ".join([f"({r},{c})" for r, c in analysis_data['food_seq']])
@@ -217,6 +222,17 @@ def run_visual_experiment():
         # even if the teammate's maze has a ghost physically blocking the choke point!
         _, full_path = evaluate_food_sequence(grid, start_pos, best_route, exit_pos, heuristic_map=None, avoid_ghosts=False)
         
+        # Calculate RL Metrics
+        ghosts_encountered = 0
+        if full_path:
+            for step in full_path:
+                r, c = step
+                if grid[r][c] == 'G':
+                    ghosts_encountered += 1
+        
+        # Formula: (+100 per food) - (5 per step) - (30 per ghost)
+        rl_score = (len(foods) * 100) - (cost * 5) - (ghosts_encountered * 30)
+        
         pygame.display.set_caption(title)
         animate_path(grid, full_path, title)
         
@@ -225,7 +241,9 @@ def run_visual_experiment():
             'time': exec_time,
             'distance': cost,
             'food_seq': best_route,
-            'path': full_path
+            'path': full_path,
+            'ghosts': ghosts_encountered,
+            'score': rl_score
         }
 
 if __name__ == "__main__":
