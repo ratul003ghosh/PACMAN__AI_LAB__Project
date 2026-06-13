@@ -11,7 +11,7 @@ def in_bounds(grid, position):
 
 def find_symbol(grid, symbol):
     for row in range(len(grid)):
-        for col in range(len(grid[0])):
+        for col in range(len(grid[row])):
             if grid[row][col] == symbol:
                 return (row, col)
     return None
@@ -19,7 +19,7 @@ def find_symbol(grid, symbol):
 def find_all_symbols(grid, symbol):
     positions = []
     for row in range(len(grid)):
-        for col in range(len(grid[0])):
+        for col in range(len(grid[row])):
             if grid[row][col] == symbol:
                 positions.append((row, col))
     return positions
@@ -67,7 +67,7 @@ def manhattan_distance(position_a, position_b):
 def dijkstra_grid(grid, start, avoid_ghosts=True):
     distances = {}
     for row in range(len(grid)):
-        for col in range(len(grid[0])):
+        for col in range(len(grid[row])):
             position = (row, col)
             if is_walkable(grid, position, avoid_ghosts=avoid_ghosts):
                 distances[position] = float("inf")
