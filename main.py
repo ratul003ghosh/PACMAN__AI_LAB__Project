@@ -103,8 +103,6 @@ def show_menu(analysis_data=None):
             y_offset += 10
             if analysis_data['path']:
                 path_str = "Path Coordinates: " + " -> ".join([f"({r},{c})" for r, c in analysis_data['path']])
-                if len(path_str) > 400:
-                    path_str = path_str[:397] + "..."
             else:
                 path_str = "Path Coordinates: PATH BLOCKED BY GHOSTS"
             y_offset = draw_text(path_str, font_small, (200, 255, 200), DASHBOARD_X + 20, y_offset, max_width=DASHBOARD_WIDTH-40)
