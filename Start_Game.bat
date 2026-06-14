@@ -1,4 +1,6 @@
 @echo off
+echo Installing/Checking libraries (Pygame, Matplotlib)...
+pip install pygame matplotlib python-docx
 echo Starting AI Pac-Man Presentation...
 python main.py
 pause
